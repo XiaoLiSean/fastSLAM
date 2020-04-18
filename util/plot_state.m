@@ -33,7 +33,7 @@ function plot_state(SLAM, gt, trajectory, landmarks, timestep, z, window)
     end
 
     % draw the observations
-    for i = 1:size(z,2)
+    for i = 1:length(z)
         l = SLAM.particle(bestParticleIdx).landmark(z(i).id).EKF.mu;
         line([SLAM.particle(bestParticleIdx).pose(1), l(1)], [SLAM.particle(bestParticleIdx).pose(2), l(2)],...
             'color', 'r', 'LineStyle','--', 'linewidth', 1);

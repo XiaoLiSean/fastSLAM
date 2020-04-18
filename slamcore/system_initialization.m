@@ -15,6 +15,8 @@ sys.M = @(u) [...
 %sys.M   = diag([0.01, 0.005, 0.005]);
 %% Sensor Measurement Model
 % measurement model: [range bearing]
+% negative for clockwise measurements
+% positive for counter clockwise measurements
 sys.hfun = @(landmark_x, landmark_y, x) [...
     sqrt((landmark_y - x(2))^2 + (landmark_x - x(1))^2);
     wrapToPi(atan2(landmark_y - x(2), landmark_x - x(1)) - x(3))];
