@@ -35,11 +35,10 @@ classdef FastSLAM2 < handle
             obj.n       = init.n;
             obj.particle    = init.particle;
             % number of landmark
-%             obj.particle.m  = init.m;
+            % obj.particle.m  = init.m;
         end
         
-        % Propagate Particles through Motion Model (Motion model)
-%         function prediction(obj, u, z)
+
         function update(obj, u, z)
             % for fastSLAM2 the seperation between prediction and
             % correction is not clear
@@ -154,14 +153,13 @@ classdef FastSLAM2 < handle
             end
 
             Neff = 1 / sum([obj.particle.weight].^2);
+            % disp(Neff)
             if Neff < obj.n / 2
                 obj.resample();
+                disp('resample');
             end
         end
                
-%         function correction(obj, z)
-            
-%         end 
          
         function resample(obj)
             W = cumsum([obj.particle.weight]);

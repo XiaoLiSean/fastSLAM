@@ -14,7 +14,7 @@ SLAM_name           = 'FastSLAM2';
 % Number of landmarks in the map
 numlandmarks        = size(landmarks,2);
 % how many particles
-numParticles        = 200;
+numParticles        = 100;
 % simulation timestep
 timestep            = size(sensor.timestep, 2);
 % Initializa trajectory register for plot {particle, time step}
@@ -22,7 +22,7 @@ trajectory          = cell(numParticles, timestep);
 gt                  = zeros(3, timestep); % Groud truth trajectory
 % Set initial mean and covariance (prior) for PF
 initialStateMean    = [0 0 0]';
-initialStateCov     = 0.001*eye(3);
+initialStateCov     = 0.0001*eye(3);
 % Motion noise
 alphas  = [0.00025 0.00005 0.0025 0.0005 0.0025 0.0005].^2; % variance of noise proportional to alphas
 % Standard deviation of Gaussian sensor noise (independent of distance)
