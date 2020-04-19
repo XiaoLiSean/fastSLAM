@@ -10,11 +10,11 @@ landmarks   = read_world('./data/world.dat');
 sensor      = read_data('./data/sensor_data.dat');
 
 %% Initialize SLAM systems
-SLAM_name           = 'FastSLAM';
+SLAM_name           = 'FastSLAM2';
 % Number of landmarks in the map
 numlandmarks        = size(landmarks,2);
 % how many particles
-numParticles        = 100;
+numParticles        = 200;
 % simulation timestep
 timestep            = size(sensor.timestep, 2);
 % Initializa trajectory register for plot {particle, time step}
@@ -26,10 +26,15 @@ initialStateCov     = 0.001*eye(3);
 % Motion noise
 alphas  = [0.00025 0.00005 0.0025 0.0005 0.0025 0.0005].^2; % variance of noise proportional to alphas
 % Standard deviation of Gaussian sensor noise (independent of distance)
-beta    = deg2rad(5);
+beta    = deg2rad(10);%deg2rad(5);
 sys     = system_initialization(alphas, beta);
 SLAM    = SLAM_initialization(sys, initialStateMean, initialStateCov,...
                               numlandmarks, numParticles, SLAM_name);
+% initialStateMean = 
+% initialStateCov
+% SLAM    = SLAM_initialization(sys, initialStateMean, initialStateCov,...
+%                               numlandmarks, numParticles, SLAM_name,...
+%                               initialMeasureMean, initialMeasureCov);
 
 
 % toogle the visualization type
@@ -50,11 +55,18 @@ for t = 1:timestep
     for i = 1:numParticles
         trajectory{i,t}     = SLAM.particle(i).pose;
     end
-    % Perform the prediction step of the particle filter
-    SLAM.prediction(sensor.timestep(t).odometry);
     
-    % Perform the correction step of the particle filter
-    SLAM.correction(sensor.timestep(t).sensor);
+    switch SLAM_name
+        case 'FastSLAM'
+            % Perform the prediction step of the particle filter
+            SLAM.prediction(sensor.timestep(t).odometry);
+            % Perform the correction step of the particle filter
+            SLAM.correction(sensor.timestep(t).sensor);
+            
+        case 'FastSLAM2'
+            % FastSLAM2.0 take both u and z
+            SLAM.update(sensor.timestep(t).odometry, sensor.timestep(t).sensor); 
+    end
     
     % Generate visualization plots of the current state of the filter
     plot_state(SLAM, gt, trajectory, landmarks, t, sensor.timestep(t).sensor, showGui);
