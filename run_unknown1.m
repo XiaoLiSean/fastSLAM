@@ -12,7 +12,7 @@ bearing_lim = pi;
 sensor      = gen_measurements(range_lim, bearing_lim);
 
 %% Initialize SLAM systems
-SLAM_name           = 'FastSLAM';
+SLAM_name           = 'FastSLAM_unknow1';
 % Number of landmarks in the map
 numlandmarks        = size(landmarks,2);
 % how many particles
@@ -31,7 +31,8 @@ alphas  = [0.00025 0.00005 0.0025 0.0005 0.0025 0.0005].^2; % variance of noise 
 beta    = deg2rad(5); % which is identical to gen_measurements.m
 sys     = system_initialization(alphas, beta);
 SLAM    = SLAM_initialization(sys, initialStateMean, initialStateCov,...
-                              numlandmarks, numParticles, SLAM_name);
+                              numlandmarks, numParticles,...
+                              range_lim, bearing_lim, SLAM_name);
 
 
 % toogle the visualization type

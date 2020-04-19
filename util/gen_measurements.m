@@ -31,8 +31,9 @@ function sensor = gen_measurements(range_lim, bearing_lim)
             data            = sys.hfun(landmarks(l).x, landmarks(l).y, pose);
             if data(1,1) < range_lim && abs(data(2,1)) < bearing_lim
                 result.id       = landmarks(l).id;
-                result.range    = data(1,1);
-                result.bearing  = data(2,1);
+                % Take noise measurements
+                result.range    = normrnd(data(1,1), sys.Qt(1,1));
+                result.bearing  = normrnd(data(2,1), sys.Qt(2,2));
                 measurement     = [measurement, result];
             end
         end

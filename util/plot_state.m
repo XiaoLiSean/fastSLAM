@@ -24,21 +24,34 @@ function plot_state(SLAM, gt, trajectory, landmarks, timestep, z, window)
     [~, bestParticleIdx] = max([SLAM.particle.weight]);
 
     % draw the landmark locations along with the ellipsoids
-    for i = 1:length(SLAM.particle(bestParticleIdx).landmark)
-        if SLAM.particle(bestParticleIdx).landmark(i).isobserved
+    % Plot for FastSLAM with known data association
+    if isfield(SLAM.particle(bestParticleIdx).landmark, 'isobserved')
+        for i = 1:length(SLAM.particle(bestParticleIdx).landmark)
+            if SLAM.particle(bestParticleIdx).landmark(i).isobserved
+                l = SLAM.particle(bestParticleIdx).landmark(i).EKF.mu;
+                plot(l(1), l(2), 'bo', 'markersize', 3);
+                drawprobellipse(l, SLAM.particle(bestParticleIdx).landmark(i).EKF.Sigma, 0.95, 'b');
+            end
+        end
+    % Plot for FastSLAM with unknown data association
+    else
+        for i = 1:length(SLAM.particle(bestParticleIdx).landmark)
             l = SLAM.particle(bestParticleIdx).landmark(i).EKF.mu;
             plot(l(1), l(2), 'bo', 'markersize', 3);
             drawprobellipse(l, SLAM.particle(bestParticleIdx).landmark(i).EKF.Sigma, 0.95, 'b');
         end
     end
+    
 
     % draw the observations
     for i = 1:length(z)
-        l = SLAM.particle(bestParticleIdx).landmark(z(i).id).EKF.mu;
-        line([SLAM.particle(bestParticleIdx).pose(1), l(1)], [SLAM.particle(bestParticleIdx).pose(2), l(2)],...
+        pose    = SLAM.particle(bestParticleIdx).pose;
+        l_x     = pose(1) + z(i).range*cos(pose(3)+z(i).bearing);
+        l_y     = pose(2) + z(i).range*sin(pose(3)+z(i).bearing);
+        line([pose(1), l_x], [pose(2), l_y],...
             'color', 'r', 'LineStyle','--', 'linewidth', 1);
     end
-
+        
     % draw the groud true trajectory
     line(gt(1,1:timestep), gt(2,1:timestep), 'color', 'cyan', 'linewidth', 2);
 
