@@ -24,7 +24,7 @@ trajectory          = cell(numParticles, timestep);
 gt                  = zeros(3, timestep); % Groud truth trajectory
 % Set initial mean and covariance (prior) for PF
 initialStateMean    = [0 0 0]'; % default: do not change!
-initialStateCov     = 0.001*eye(3);
+initialStateCov     = 0.001*eye(3);%diag([0.001, 0.001, 0.001]);%
 % Motion noise
 alphas  = [0.00025 0.00005 0.0025 0.0005 0.0025 0.0005].^2; % variance of noise proportional to alphas
 % Standard deviation of Gaussian sensor noise (independent of distance)

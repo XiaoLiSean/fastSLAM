@@ -129,7 +129,8 @@ classdef FastSLAM_unknown2 < handle
                 end 
                 end
                 
-                [obj.particle(k).pose, obj.particle(k).weight] = obj.PoseAndWeight(pose_nn,weight_nn);
+                [obj.particle(k).pose, weight_k] = obj.PoseAndWeight(pose_nn,weight_nn);
+                obj.particle(k).weight = obj.particle(k).weight*weight_k;
                 
                 % Discard dubious feature
                 is_dubious  = false(1, obj.particle(k).m);
@@ -150,14 +151,22 @@ classdef FastSLAM_unknown2 < handle
             end
             
             % Update Weights
+            % try increase weight difference ======
+            temp = ([obj.particle.weight] - min([obj.particle.weight]));
+            if any(temp~=0)
+                for k = 1:obj.n
+                    obj.particle(k).weight = temp(k);
+                end
+            end
+            %======================================
             weight_sum  = sum([obj.particle.weight]);
             for k = 1:obj.n
                 obj.particle(k).weight  = obj.particle(k).weight / weight_sum;
             end
 
             Neff = 1 / sum([obj.particle.weight].^2);
-            % disp(Neff)
-            if Neff < obj.n / 2
+            disp(Neff)
+            if Neff < obj.n*0.9 %obj.n / 2
                 obj.resample();
                 disp('resample');
             end
