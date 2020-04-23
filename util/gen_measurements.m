@@ -9,8 +9,8 @@ function sensor = gen_measurements(range_lim, bearing_lim)
     sensor      = read_data('./data/sensor_data.dat');
     
     %% Initialize measurement noise (which is identical to SLAM sys initialization in run.m)
-    beta    = deg2rad(5);
-    sys     = system_initialization(zeros(1,6), beta); % motion model is not used here initialized with zeros(1,6)
+    betas   = [0.1 2 deg2rad(5)];
+    sys     = system_initialization(zeros(1,6), betas); % motion model is not used here initialized with zeros(1,6)
     initialStateMean    = [0 0 0]'; % default: do not change! (initial robot pose)
     
     timestep            = size(sensor.timestep, 2);
