@@ -29,7 +29,7 @@ axis([-50,50,0,75]);
 hold off ;
 
 Mask13 = uint16(2^13 -1) ;
-MaskA  = bitcmp(Mask13,16) ;
+MaskA  = bitcmp(Mask13,'uint16') ;
 
 for i=1:L,
 	RR = double(  bitand( Mask13,LASER(i,:)) ) ;
