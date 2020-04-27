@@ -1,4 +1,4 @@
-function plot_state(SLAM, gt, trajectory, timestep, z, window)
+function plot_state_vp(SLAM, gt, trajectory, timestep, z, window)
     % Visualizes the state of the FastSLAM algorithm.
     %
     % The resulting plot displays the following information:
@@ -44,7 +44,7 @@ function plot_state(SLAM, gt, trajectory, timestep, z, window)
     
 
     % draw the observations
-    for i = 1:length(z)
+    for i = 1:size(z,2)
         pose    = SLAM.particle(bestParticleIdx).pose;
         l_x     = pose(1) + z(1,i)*cos(pose(3)+z(2,i));
         l_y     = pose(2) + z(1,i)*sin(pose(3)+z(2,i));

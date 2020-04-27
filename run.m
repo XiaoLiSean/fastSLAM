@@ -26,7 +26,7 @@ initialStateCov     = 0.001*eye(3);
 % Motion noise
 alphas  = [0.00025 0.00005 0.0025 0.0005 0.0025 0.0005].^2; % variance of noise proportional to alphas
 % Standard deviation of Gaussian sensor noise (independent of distance)
-beta    = deg2rad(5);
+beta    = [0.1 2 deg2rad(5)];
 sys     = system_initialization(alphas, beta);
 SLAM    = SLAM_initialization(sys, initialStateMean, initialStateCov,...
                               numlandmarks, numParticles, SLAM_name);

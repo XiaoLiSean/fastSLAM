@@ -33,12 +33,22 @@ classdef FastSLAM < handle
         
         % Propagate Particles through Motion Model (Motion model)
         function prediction(obj, u)
-            Cov     = obj.M([u.t; u.r1; u.r2]);
-            for k = 1:obj.n
-                u_noise     = [normrnd(u.t, Cov(1,1));...
-                               normrnd(u.r1, Cov(2,2));...
-                               normrnd(u.r2, Cov(3,3))];
-                obj.particle(k).pose    = obj.gfun(obj.particle(k).pose, u_noise);
+            if  isfield(u,'r1')
+                % Prediction of self generated dataset
+                Cov     = obj.M([u.t; u.r1; u.r2]);
+                for k = 1:obj.n
+                    u_noise     = [normrnd(u.t, Cov(1,1));...
+                                   normrnd(u.r1, Cov(2,2));...
+                                   normrnd(u.r2, Cov(3,3))];
+                    obj.particle(k).pose    = obj.gfun(obj.particle(k).pose, u_noise);
+                end
+            else
+                % Prediction of VP dataset
+                for k = 1:obj.n
+                    u_noise     = [normrnd(u.trans, obj.M(1,1));...
+                                   normrnd(u.steer, obj.M(2,2))];
+                    obj.particle(k).pose    = obj.gfun(obj.particle(k).pose, u_noise);
+                end
             end
         end
                

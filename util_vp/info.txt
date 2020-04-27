@@ -1,0 +1,79 @@
+*** laser data:
+file : aa3_lsr2.mat
+
+
+
+LASER is a uint16 matrix, 361 columns, N rows. 
+      column k corresponds to the range in direction of angle Ak =  (k-1)*/2    (in de degrees)
+      the ranges are in CM.
+      ranges  higher than 8000 cm are considered  'no reflexion' (infinite distance).
+
+TLsr is the time vector, dimm = Nx1. it is uint32 type. 
+
+
+then LASER(k,:) is a laser frame, with timestamp  TLsr(k).
+
+
+==================================
+*** dead-reckoning data:
+
+in file aa3_dr.m.
+
+variables:
+
+speed    	: in m/secs.
+steering        : in radians.
+time            : in millisecs.
+
+
+speed(k), steering(k) are related to timestamp time(k).
+
+
+do 
+
+load aa3_dr.mat
+figure(1) ; clf ; plot(time,speed) ; xlabel('time  (ms)') ; ylabel('speed, (m/sec)') ;
+figure(2) ; clf ; plot(time,steering) ; xlabel('time  (ms)') ; ylabel('steering, (rads)') ;
+
+==================================
+*** gps  data.
+
+Lo_m : longitude (in meters)
+La_m : latitude (in meters)
+timeGps : time in msecs.
+
+
+obs: the gps unit was failing, it is possible to see jumps and regions without gps data.
+
+run :
+
+clear all; 
+load aa3_gpsx ; plot(Lo_m,La_m,'.') ;
+
+==================================
+
+
+*** run  ViewLsr.m to see the laser data (dynamically) 
+
+===================================
+
+use DetecTrees.m  to get the landmarks from the laser frame data.
+see ViewLsr code to see how to use it.
+
+===================================
+
+
+CAR parameters: (see car.bmp drawing)
+
+a  : 0.95 m
+b  : 0.5  m
+H  : 0.76 m 
+L  : 2.83 m
+
+===================================
+
+
+
+
+
+
