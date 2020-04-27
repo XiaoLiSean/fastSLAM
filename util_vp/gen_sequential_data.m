@@ -18,7 +18,7 @@ function VP = gen_sequential_data()
     load car.mat; % car parameters
     global AAr; % used for detectTreesl16.m
     AAr = [0:360]*pi/360;
-
+           
     %% Unit Transformation
     % z measurement of timestep 7249
     z.ranges    = double(LASER)/100; % [m]
@@ -71,3 +71,4 @@ function VP = gen_sequential_data()
         end
     end
 end
+

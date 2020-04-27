@@ -1,10 +1,5 @@
-function sensor = gen_measurements(range_lim, bearing_lim)
+function sensor = gen_measurements(range_lim, bearing_lim, landmarks)
     %% Load Map and Odometry to re-gain new measurements under new defined range and bearing limits
-    %  range_lim = double 1x1
-    %  bearing_lim = double 1x1 with symmetric bearing measurement range assumption
-    
-    % Read world data, i.e. landmarks. The true landmark positions are not given to the robot
-    landmarks   = read_world('./data/world.dat');
     % Read sensor readings, i.e. odometry and range-bearing sensor
     sensor      = read_data('./data/sensor_data.dat');
     

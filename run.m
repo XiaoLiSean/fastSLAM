@@ -5,14 +5,16 @@ close all;
 addpath('util');
 addpath('slamcore');
 % Read world data, i.e. landmarks. The true landmark positions are not given to the robot
-landmarks   = read_world('./data/world.dat');
+numlandmarks= 25;% Number of landmarks in the map
+map         = [-2, 11;-2, 11]; % x, y map limits
+landmarks   = gen_landmarks(map, numlandmarks);
 % Read sensor readings, i.e. odometry and range-bearing sensor
-sensor      = read_data('./data/sensor_data.dat');
+range_lim   = 5;
+bearing_lim = pi;
+sensor      = gen_measurements(range_lim, bearing_lim, landmarks);
 
 %% Initialize SLAM systems
 SLAM_name           = 'FastSLAM';
-% Number of landmarks in the map
-numlandmarks        = size(landmarks,2);
 % how many particles
 numParticles        = 100;
 % simulation timestep
