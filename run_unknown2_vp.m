@@ -5,7 +5,7 @@ close all;
 addpath('util');
 addpath('slamcore');
 % Load data
-load('./data/VictoriaPark.mat');
+load('./data/VictoriaPark2.mat');
 range_lim   = 30;
 bearing_lim = pi;
 
@@ -14,9 +14,10 @@ SLAM_name           = 'FastSLAM_unknown2';
 % Number of landmarks in the map
 numlandmarks        = 0;
 % how many particles
-numParticles        = 200;
+numParticles        = 100;
 % simulation timestep
 tt = timeUt(1):1:timeUt(end);
+% tt = timeZt;
 timestep            = length(tt);%size(timeUt, 2);
 % Initializa trajectory register for plot {particle, time step}
 trajectory          = cell(numParticles, timestep);
@@ -25,10 +26,11 @@ gt                  = zeros(3, timestep); % Groud truth trajectory
 initialStateMean    = [gps(1,1) gps(2,1) 35.5*pi/180]'; 
 initialStateCov     = diag([0.001, 0.001, 0.001]);%
 % Motion noise
-alphas  = [0.0025 0.0005 0.025 0.05 0.025 0.005].^2;
+alphas  = [0.0025 0.005 0.0025 1.2 0.0025 0.005].^2;% 1sec
+% alphas  = [0.0025 0.0005 0.025 1.2 0.025 0.05].^2;
 % alphas  = [0.00025 0.00005 0.0025 0.0005 0.0025 0.0005].^2; % variance of noise proportional to alphas
 % Standard deviation of Gaussian sensor noise (independent of distance)
-betas   = [1 5 deg2rad(20)];
+betas   = [1 5 deg2rad(15)];
 sys     = system_initialization(alphas, betas);
 SLAM    = SLAM_initialization(sys, initialStateMean, initialStateCov,...
                               numlandmarks, numParticles,...
@@ -47,9 +49,11 @@ for ts = 1:timestep
     end
     % Update the particle filter
     [u,z,gt] = sync_data(tt(ts),ut,zt,gps,timeUt,timeZt,timeGps);
+%     u = [0 0 0]';
 %     tic;
-    SLAM.update(u, z);
+    SLAM.update(u, z);%*0.214
 %     toc;   
     % Generate visualization plots of the current state of the filter
-    plot_state_vp(SLAM, gt, trajectory, ts, z, showGui);
+    zz   = [z.range; z.bearing];
+    plot_state_vp(SLAM, gt, trajectory, ts, zz, showGui);
 end

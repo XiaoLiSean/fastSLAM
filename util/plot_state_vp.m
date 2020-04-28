@@ -16,6 +16,9 @@ function plot_state_vp(SLAM, gt, trajectory, timestep, z, window)
 %     plot(cell2mat(L(2,:)), cell2mat(L(3,:)), 'o', 'color', [0,0,0] + alpha, 'markersize', 15, 'linewidth', 2);
 %     text(cell2mat(L(2,:)), cell2mat(L(3,:)), string(cell2mat(L(1,:))), 'FontSize', 8);
 
+    % draw the groud true trajectory
+    plot(gt(1,:), gt(2,:), '.', 'color', 'cyan');%, 'linewidth', 2
+
     % Plot the particles
     ppos = [SLAM.particle.pose];
     plot(ppos(1,:), ppos(2,:), 'g.');
@@ -52,18 +55,16 @@ function plot_state_vp(SLAM, gt, trajectory, timestep, z, window)
             'color', 'r', 'LineStyle','--', 'linewidth', 1);
     end
         
-    % draw the groud true trajectory
-    plot(gt(1,:), gt(2,:), '.', 'color', 'cyan');%, 'linewidth', 2
-
+    
     % draw the trajectory as estimated by the currently best particle
     trajectory = [trajectory{bestParticleIdx,:}];
     line(trajectory(1,:), trajectory(2, :), 'color', 'k', 'LineStyle','-.', 'linewidth', 2);
 
     drawrobot(SLAM.particle(bestParticleIdx).pose, 'r', 3, 0.3, 0.3);
-%     xlim([-100, 10])
-%     ylim([-50, 10])
-    xlim([-260, 60])
-    ylim([-80, 180])
+    xlim([-100, 50])
+    ylim([-80, 50])
+%     xlim([-260, 60])
+%     ylim([-80, 180])
 
     hold off
 
