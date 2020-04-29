@@ -46,6 +46,7 @@ err.obsv_ID = cell(1,timestep); % All observed landmarks' ID by now (true)
 err.obsv_N  = zeros(1,timestep); % All observed landmarks' number by now (true)
 err.store   = zeros(1,timestep); % All stored landmarks number in particle EKF
 err.mean    = zeros(1,timestep);
+err.tr      = zeros(2, timestep);
 %% SLAM MAIN
 % Perform filter update for each odometry-observation pair read from the data file.
 for t = 1:timestep

@@ -122,12 +122,12 @@ function plot_state(SLAM, gt, trajectory, landmarks, timestep, z, window)
         else
             set(gcf,'color','w');
             figure(2); grid on;
-            subplot(3,1,1)
+            subplot(2,1,1)
             plot(1:timestep, err.obsv_N,'r','LineWidth',2); hold on;
             plot(1:timestep, err.store,'k','LineWidth',2);
             legend('True', 'Estimated')
             xlabel('Timestep'); ylabel({'Observed Landmark';'Numbers'}); set(gca,'FontSize',16);
-            subplot(3,1,2)
+            subplot(2,1,2)
             plot(1:timestep, err.mean,'r','LineWidth',2);
             xlabel('Timestep'); ylabel({'Error of landmark','estimation'}); set(gca,'FontSize',16);
             subplot(3,1,3)
