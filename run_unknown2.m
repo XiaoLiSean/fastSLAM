@@ -9,7 +9,7 @@ landmarks   = read_world('./data/world.dat');
 % Read sensor readings, i.e. odometry and range-bearing sensor
 range_lim   = 5;
 bearing_lim = pi;
-sensor      = gen_measurements(range_lim, bearing_lim);
+sensor      = gen_measurements(range_lim, bearing_lim, landmarks);
 
 %% Initialize SLAM systems
 SLAM_name           = 'FastSLAM_unknown2';

@@ -11,7 +11,7 @@ classdef FastSLAM_unknown2 < handle
         particle;           % Pose of particle (pose, weight, m, p, landmark)
         mu;
         Sigma;
-        p0 = 0.001;%0.01;          % likelihood threshold
+        p0 = 0.001;%;0.01%          % likelihood threshold
         range_lim;          % sensor perceptual range
         bearing_lim;        % +-pi
     end
@@ -45,14 +45,14 @@ classdef FastSLAM_unknown2 < handle
         function update(obj, u, z)
             % for fastSLAM2 the seperation between prediction and
             % correction is not clear
-%             EKF_Sigma = obj.M([u.t; u.r1; u.r2]);
-%             u_noise = [normrnd(u.t, EKF_Sigma(1,1));...
-%                            normrnd(u.r1, EKF_Sigma(2,2));...
-%                            normrnd(u.r2, EKF_Sigma(3,3))];
-            EKF_Sigma = obj.M(u);
-            u_noise = [normrnd(u(1), EKF_Sigma(1,1));...
-                           normrnd(u(2), EKF_Sigma(2,2));...
-                           normrnd(u(3), EKF_Sigma(3,3))];
+            EKF_Sigma = obj.M([u.t; u.r1; u.r2]);
+            u_noise = [normrnd(u.t, EKF_Sigma(1,1));...
+                           normrnd(u.r1, EKF_Sigma(2,2));...
+                           normrnd(u.r2, EKF_Sigma(3,3))];
+%             EKF_Sigma = obj.M(u);
+%             u_noise = [normrnd(u(1), EKF_Sigma(1,1));...
+%                            normrnd(u(2), EKF_Sigma(2,2));...
+%                            normrnd(u(3), EKF_Sigma(3,3))];
 
 
             num_measurements = size(z, 2);
@@ -62,8 +62,8 @@ classdef FastSLAM_unknown2 < handle
                 weight_nn = nan(1,num_measurements);
                 cor_nn = nan(1,num_measurements);
                 for nn = 1:num_measurements
-%                     z_t = [z(nn).range; wrapToPi(z(nn).bearing)];
-                    z_t = [z(1,nn); wrapToPi(z(2,nn))];
+                    z_t = [z(nn).range; wrapToPi(z(nn).bearing)];
+%                     z_t = [z(1,nn); wrapToPi(z(2,nn))];
                     
                 if obj.particle(k).m == 0
                     j = 0;
@@ -173,8 +173,8 @@ classdef FastSLAM_unknown2 < handle
             end
 
             Neff = 1 / sum([obj.particle.weight].^2);
-%             disp(Neff)
-            if Neff < obj.n / 2%obj.n*0.9 
+            disp(Neff)
+            if Neff < obj.n*0.85 %obj.n*0.9 obj.n / 2 *0.85
                 obj.resample();
                 disp('resample');
             end
