@@ -43,7 +43,7 @@ global err;
 err.showErr = true;
 err.mean    = zeros(numlandmarks, timestep);
 err.sig     = zeros(numlandmarks, timestep);
-err.tr      = zeros(numlandmarks, timestep);
+err.tr      = zeros(2, timestep);
 %% SLAM MAIN
 % Perform filter update for each odometry-observation pair read from the data file.
 for t = 1:timestep

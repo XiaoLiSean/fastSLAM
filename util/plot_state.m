@@ -62,6 +62,8 @@ function plot_state(SLAM, gt, trajectory, landmarks, timestep, z, window)
     % draw the trajectory as estimated by the currently best particle
     trajectory = [trajectory{bestParticleIdx,:}];
     line(trajectory(1,:), trajectory(2, :), 'color', 'k', 'LineStyle','-.', 'linewidth', 2);
+    tr = vecnorm(trajectory(1:2,:)-gt(1:2,timestep));
+    err.tr(1:2,timestep) = [rms(tr); std(tr)];
 
     drawrobot(SLAM.particle(bestParticleIdx).pose, 'r', 3, 0.3, 0.3);
     xlim([-2, 12])
@@ -83,14 +85,25 @@ function plot_state(SLAM, gt, trajectory, landmarks, timestep, z, window)
     % Plot error in final step
     if timestep == size(gt,2) && err.showErr
         set(gcf,'color','w');
-        figure(2); grid on;
-        subplot(2,1,1)
+        figure(2);
+        subplot(3,1,1)
         plot(1:timestep, sum(err.mean~=0),'LineWidth',2);
-        xlabel('Timestep'); ylabel({'Landmarks';'observed'}); set(gca,'FontSize',16);
-        subplot(2,1,2)
+        xlabel('Timestep'); ylabel({'Landmarks';'observed'}); set(gca,'FontSize',16); grid on;
+        subplot(3,1,2)
         errorbar(1:timestep, sqrt(sum(err.mean.^2,1))./sum(err.mean~=0),...
                  sqrt(sum(err.sig.^2,1))./sum(err.mean~=0),'r-','LineWidth',0.2);
-        xlabel('Timestep'); ylabel({'MSE of landmarks','estimation'}); set(gca,'FontSize',16);
+        xlabel('Timestep'); ylabel({'MSE of landmarks','estimation'}); set(gca,'FontSize',16); grid on;
         %errorbar(repmat(1:timestep,length(landmarks),1), err.mean,err.sig)
+
+        subplot(3,1,3)
+        errorbar(1:timestep, err.tr(1,:), err.tr(2,:),'b-','LineWidth',0.2);
+        xlabel('Timestep'); ylabel({'MSE of trajectory','estimation (m)'}); set(gca,'FontSize',16);
+        ylim([0 15]); grid on;
+        
+        % setting for printing png
+        set(gcf,'Units','inches','position',[0 0 10 13]);
+        fig.PaperPositionMode = 'auto';
+        set(gcf,'PaperUnits','inches','PaperPosition',[0 0 10 13]);
+        saveas(gcf,'fig/try_error.png');
     end
 end
