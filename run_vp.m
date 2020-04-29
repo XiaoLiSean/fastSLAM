@@ -19,10 +19,10 @@ timestep            = length(VP.Data);
 trajectory          = cell(numParticles, timestep);
 gt                  = [VP.GPS.x'; VP.GPS.y']; % Groud truth trajectory
 % Set initial mean and covariance (prior) for PF
-initialStateMean    = [VP.GPS.x(1); VP.GPS.y(1); 35.5*pi/180];
-initialStateCov     = 0.001*eye(3);
+initialStateMean    = [VP.GPS.x(2); VP.GPS.y(2); 36*pi/180];
+initialStateCov     = 0*eye(3);
 % Control noise: [translation and steering]
-M   = diag([0.02; 2*pi/180].^2);
+M   = 0*diag([0.02; 2*pi/180].^2);
 % Measurement noise: [range and bearing]
 Qt  = diag([0.05; pi/180].^2);
 sys     = system_initialization(M, Qt);

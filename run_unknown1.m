@@ -5,11 +5,12 @@ close all;
 addpath('util');
 addpath('slamcore');
 % Read world data, i.e. landmarks. The true landmark positions are not given to the robot
-numlandmarks= 25;% Number of landmarks in the map
-map         = [-2, 11;-2, 11]; % x, y map limits
-landmarks   = gen_landmarks(map, numlandmarks);
+% numlandmarks= 25;% Number of landmarks in the map
+% map         = [-2, 11;-2, 11]; % x, y map limits
+% landmarks   = gen_landmarks(map, numlandmarks);
+load data/landmarks;
 % Read sensor readings, i.e. odometry and range-bearing sensor
-range_lim   = 5;
+range_lim   = 4;
 bearing_lim = pi;
 sensor      = gen_measurements(range_lim, bearing_lim, landmarks);
 
@@ -39,6 +40,11 @@ SLAM    = SLAM_initialization(sys, initialStateMean, initialStateCov,...
 
 % toogle the visualization type
 showGui = true;
+global err;
+err.showErr = true;
+err.mean    = zeros(numlandmarks, timestep);
+err.sig     = zeros(numlandmarks, timestep);
+err.tr      = zeros(numlandmarks, timestep);
 %% SLAM MAIN
 % Perform filter update for each odometry-observation pair read from the data file.
 for t = 1:timestep
@@ -62,5 +68,6 @@ for t = 1:timestep
     SLAM.correction(sensor.timestep(t).sensor);
     
     % Generate visualization plots of the current state of the filter
+    set(gcf,'color','w');
     plot_state(SLAM, gt, trajectory, landmarks, t, sensor.timestep(t).sensor, showGui);
 end

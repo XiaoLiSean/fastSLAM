@@ -81,16 +81,14 @@ function plot_state(SLAM, gt, trajectory, landmarks, timestep, z, window)
     end
     
     % Plot error in final step
-    if timestep == size(gt,2) && err.showErr
-        set(gcf,'color','w');
+    if timestep == size(gt,2)
         figure(2); grid on;
         subplot(2,1,1)
-        plot(1:timestep, sum(err.mean~=0),'LineWidth',2);
-        xlabel('Timestep'); ylabel({'Landmarks';'observed'}); set(gca,'FontSize',16);
+        plot(1:timestep, sum(err.mean~=0),'LineWidth',2,'FontSize');
+        xlabel('Timestep'); ylabel('Landmarks observed');
         subplot(2,1,2)
-        errorbar(1:timestep, sqrt(sum(err.mean.^2,1))./sum(err.mean~=0),...
-                 sqrt(sum(err.sig.^2,1))./sum(err.mean~=0),'r-','LineWidth',0.2);
-        xlabel('Timestep'); ylabel({'MSE of landmarks','estimation'}); set(gca,'FontSize',16);
+        errorbar(1:timestep, sqrt(sum(err.mean.^2,1)), sqrt(sum(err.sig.^2,1)),'r-','LineWidth',1);
+        xlabel('Timestep'); ylabel('SSE of landmarks estimation');     
         %errorbar(repmat(1:timestep,length(landmarks),1), err.mean,err.sig)
     end
 end
