@@ -101,7 +101,7 @@ classdef FastSLAM_unknown1 < handle
                     end
                     % Exclude dubious landmarks at last measurement data
                     % using correspondence data
-                    is_dubious  = boolean(zeros(1, obj.particle(k).N));
+                    idx_dubious  = [];
                     if nn == num_measurements
                         for j = 1:obj.particle(k).N
                             pose_l  = obj.particle(k).landmark(j).EKF.mu;
@@ -112,18 +112,16 @@ classdef FastSLAM_unknown1 < handle
                             if obsv(1) < obj.range_lim && abs(obsv(2)) < obj.bearing_lim && ~ismember(j, cor(:,k))
                                 obj.particle(k).landmark(j).i   = obj.particle(k).landmark(j).i - 1;                       
                                 if obj.particle(k).landmark(j).i < 0
-                                    is_dubious(1,j)     = true;
+                                    idx_dubious  = [idx_dubious, j];
                                 end
                             end
                         end
                     end
                     % Discard dubious features
-                    for j = 1:obj.particle(k).N
-                        if is_dubious(j)
-                            obj.particle(k).landmark(j)     = []; % discard dubious features 
-                            obj.particle(k).N               = obj.particle(k).N - 1;
-                        end
-                    end
+                    
+                    obj.particle(k).landmark(idx_dubious)     = []; % discard dubious features
+                    obj.particle(k).N   = length(obj.particle(k).landmark);
+                    
                 end
             end
             

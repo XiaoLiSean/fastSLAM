@@ -77,7 +77,12 @@ classdef FastSLAM_unknown2 < handle
                         Hx = obj.Hxfun(EKF_mu(1),EKF_mu(2), x_hat, z_bar);
                         Hm = obj.Hmfun(EKF_mu(1),EKF_mu(2), x_hat, z_bar);
                         Q = obj.Qt + Hm*EKF_Sigma*Hm';
-                        Sigma_x = inv( Hx'*inv(Q)*Hx + inv(obj.M(u_noise)) );
+                        
+                        if sum(diag(obj.M(u_noise))) ~= 0
+                            Sigma_x = inv( Hx'*inv(Q)*Hx + inv(obj.M(u_noise)) );
+                        else
+                            Sigma_x = inv( Hx'*inv(Q)*Hx + inv(diag([0.02; 0.02; 2*pi/180].^2)) );
+                        end
                         mu_x = Sigma_x*Hx'*inv(Q)*(z_t-z_bar) + x_hat;
                         L_x = chol(Sigma_x,'lower');
                         x_j = mu_x + L_x*randn(3,1);
@@ -113,7 +118,11 @@ classdef FastSLAM_unknown2 < handle
                         Hx = obj.Hxfun(EKF_mu(1),EKF_mu(2), x_hat, z_bar);
                         Hm = obj.Hmfun(EKF_mu(1),EKF_mu(2), x_hat, z_bar);
                         Q = obj.Qt + Hm*EKF_Sigma*Hm';
-                        Sigma_x = inv( Hx'*inv(Q)*Hx + inv(obj.M(u_noise)) );
+                        if sum(diag(obj.M(u_noise))) ~= 0
+                            Sigma_x = inv( Hx'*inv(Q)*Hx + inv(obj.M(u_noise)) );
+                        else
+                            Sigma_x = inv( Hx'*inv(Q)*Hx + inv(diag([0.02; 0.02; 2*pi/180].^2)) );
+                        end
                         mu_x = Sigma_x*Hx'*inv(Q)*(z_t-z_bar) + x_hat;
                         L_x = chol(Sigma_x,'lower');
                         x_j = mu_x + L_x*randn(3,1);
