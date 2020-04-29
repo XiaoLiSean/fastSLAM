@@ -42,9 +42,10 @@ SLAM    = SLAM_initialization(sys, initialStateMean, initialStateCov,...
 showGui = true;
 global err;
 err.showErr = true;
-err.mean    = zeros(numlandmarks, timestep);
-err.sig     = zeros(numlandmarks, timestep);
-err.tr      = zeros(numlandmarks, timestep);
+err.obsv_ID = cell(1,timestep); % All observed landmarks' ID by now (true)
+err.obsv_N  = zeros(1,timestep); % All observed landmarks' number by now (true)
+err.store   = zeros(1,timestep); % All stored landmarks number in particle EKF
+err.mean    = zeros(1,timestep);
 %% SLAM MAIN
 % Perform filter update for each odometry-observation pair read from the data file.
 for t = 1:timestep

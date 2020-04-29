@@ -25,7 +25,8 @@ function plot_state(SLAM, gt, trajectory, landmarks, timestep, z, window)
 
     % draw the landmark locations along with the ellipsoids
     % Plot for FastSLAM with known data association
-    if isfield(SLAM.particle(bestParticleIdx).landmark, 'isobserved')
+    is_known    = isfield(SLAM.particle(bestParticleIdx).landmark, 'isobserved'); % is data association known?
+    if is_known
         for i = 1:length(SLAM.particle(bestParticleIdx).landmark)
             if SLAM.particle(bestParticleIdx).landmark(i).isobserved
                 l = SLAM.particle(bestParticleIdx).landmark(i).EKF.mu;
@@ -39,11 +40,31 @@ function plot_state(SLAM, gt, trajectory, landmarks, timestep, z, window)
         end
     % Plot for FastSLAM with unknown data association
     else
+        X = []; % store Landmarks position of best particle
         for i = 1:length(SLAM.particle(bestParticleIdx).landmark)
             l = SLAM.particle(bestParticleIdx).landmark(i).EKF.mu;
+            X = [X,l]; % store Landmarks position of best particle
             plot(l(1), l(2), 'bo', 'markersize', 3);
             drawprobellipse(l, SLAM.particle(bestParticleIdx).landmark(i).EKF.Sigma, 0.95, 'b');
         end
+        % Extract landmarks estimation error
+        obsv_ID     = [z.id]; % Observed landmarks at this timestep
+        if timestep == 1
+            err.obsv_ID(timestep)    = {obsv_ID}; % Initial observed landmarks
+        else
+            % All observed landmarks' ID by now
+            err.obsv_ID(timestep)    = {union(cell2mat(err.obsv_ID(timestep-1)), obsv_ID)};
+        end
+        err.obsv_N(timestep)    = length(cell2mat(err.obsv_ID(timestep)));
+        err.store(timestep)     = length(SLAM.particle(bestParticleIdx).landmark);
+        % Logrithm err calculation for best association I
+        IDs = cell2mat(err.obsv_ID(timestep));
+        Mx  = [landmarks(IDs).x];
+        My  = [landmarks(IDs).y];
+        M   = [Mx; My];
+        I   = pinv(X)*M;
+        [~,Err,~]   = svd(I,'econ');
+        err.mean(timestep)  = norm(logm(Err));
     end
     
 
@@ -81,14 +102,29 @@ function plot_state(SLAM, gt, trajectory, landmarks, timestep, z, window)
     end
     
     % Plot error in final step
-    if timestep == size(gt,2)
-        figure(2); grid on;
-        subplot(2,1,1)
-        plot(1:timestep, sum(err.mean~=0),'LineWidth',2,'FontSize');
-        xlabel('Timestep'); ylabel('Landmarks observed');
-        subplot(2,1,2)
-        errorbar(1:timestep, sqrt(sum(err.mean.^2,1)), sqrt(sum(err.sig.^2,1)),'r-','LineWidth',1);
-        xlabel('Timestep'); ylabel('SSE of landmarks estimation');     
-        %errorbar(repmat(1:timestep,length(landmarks),1), err.mean,err.sig)
+    if timestep == size(gt,2) && err.showErr
+        if is_known
+            set(gcf,'color','w');
+            figure(2); grid on;
+            subplot(2,1,1)
+            plot(1:timestep, err.obsv_N,'r','LineWidth',2); hold on;
+            plot(1:timestep, err.store,'k','LineWidth',2);
+            legend('Landmarks Exist and Measured', 'Landmarks')
+            xlabel('Timestep'); ylabel({'Landmarks';'observed'}); set(gca,'FontSize',16);
+            subplot(2,1,2)
+            errorbar(1:timestep, sqrt(sum(err.mean.^2,1))./sum(err.mean~=0),...
+                     sqrt(sum(err.sig.^2,1))./sum(err.mean~=0),'r-','LineWidth',0.2);
+            xlabel('Timestep'); ylabel({'MSE of landmarks','estimation'}); set(gca,'FontSize',16);
+        else
+            set(gcf,'color','w');
+            figure(2); grid on;
+            subplot(2,1,1)
+            plot(1:timestep, sum(err.mean~=0),'LineWidth',2);
+            xlabel('Timestep'); ylabel({'Landmarks';'observed'}); set(gca,'FontSize',16);
+            subplot(2,1,2)
+            errorbar(1:timestep, sqrt(sum(err.mean.^2,1))./sum(err.mean~=0),...
+                     sqrt(sum(err.sig.^2,1))./sum(err.mean~=0),'r-','LineWidth',0.2);
+            xlabel('Timestep'); ylabel({'MSE of landmarks','estimation'}); set(gca,'FontSize',16);
+        end
     end
 end
