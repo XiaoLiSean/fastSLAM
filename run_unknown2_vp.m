@@ -14,7 +14,7 @@ SLAM_name           = 'FastSLAM_unknown2';
 % Number of landmarks in the map
 numlandmarks        = 0;
 % how many particles
-numParticles        = 100;
+numParticles        = 1;
 % simulation timestep
 %tt = timeUt(1):1:timeUt(end);
 timestep            = length(Data);
