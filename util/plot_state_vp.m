@@ -61,8 +61,8 @@ function plot_state_vp(SLAM, gt, trajectory, timestep, z, window)
     line(trajectory(1,:), trajectory(2, :), 'color', 'k', 'LineStyle','-.', 'linewidth', 2);
 
     drawrobot(SLAM.particle(bestParticleIdx).pose, 'r', 3, 0.3, 0.3);
-    xlim([-100, 50])
-    ylim([-80, 50])
+    xlim([-180, 60])
+    ylim([-90, 180])
 %     xlim([-260, 60])
 %     ylim([-80, 180])
 
