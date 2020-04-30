@@ -20,7 +20,7 @@ numParticles        = 100;
 timestep            = length(Data);
 % Initializa trajectory register for plot {particle, time step}
 trajectory          = cell(numParticles, timestep);
-gt                  = gps; % Groud truth trajectory
+gt                  = zeros(3, timestep); % Groud truth trajectory
 % Set initial mean and covariance (prior) for PF
 initialStateMean    = x0; 
 initialStateCov     = diag([0.001, 0.001, 0.001]);%
@@ -41,20 +41,36 @@ showGui = true;
 %% SLAM MAIN
 % Perform filter update for each odometry-observation pair read from the data file.
 
-for t = 1:timestep
+% for ts = 1:timestep
+%     % Store system particle trajectory for plot
+%     for i = 1:numParticles
+%         trajectory{i,ts}     = SLAM.particle(i).pose;
+%     end
+%     % Update the particle filter
+%     [u,z,gt] = sync_data(tt(ts),ut,zt,gps,timeUt,timeZt,timeGps);
+% %     u = [0 0 0]';
+% %     tic;
+%     SLAM.update(u, z);%*0.214
+% %     toc;   
+%     disp('Timestep'); disp(ts);
+%     % Generate visualization plots of the current state of the filter
+%     zz   = [z.range; z.bearing];
+%     plot_state_vp(SLAM, gt, trajectory, ts, zz, showGui);
+% end
+
+for t = 1:length(VP.Data)
     % Store system particle trajectory for plot
     for i = 1:numParticles
         trajectory{i,t}     = SLAM.particle(i).pose;
     end
-    % Update the particle filter
-%    [u,z,gt] = sync_data(tt(ts),ut,zt,gps,timeUt,timeZt,timeGps);
-%     u = [0 0 0]';
-%     tic;
-    z = Data(t).sensors;
-    SLAM.update(Data(t).odometry, Data(t).sensors);%*0.214
-%     toc;   
-    disp('Timestep'); disp(t);
-    % Generate visualization plots of the current state of the filter
-    zz   = [z.range; z.bearing];
-    plot_state_vp(SLAM, gps, trajectory, t, zz, showGui);
+    if strcmp(Data(t).type, 'odometry')
+        % Perform the prediction step of the particle filter
+        SLAM.prediction(VP.Data(t).odometry);
+    elseif strcmp(Data(t).type, 'measure')
+        % Perform the correction step of the particle filter
+        SLAM.correction(VP.Data(t).sensors);
+        % Generate visualization plots of the current state of the filter
+        z   = [VPData(t).sensors.range;VP.Data(t).sensors.bearing];
+        plot_state_vp(SLAM, gt, trajectory, t, z, showGui);
+    end
 end

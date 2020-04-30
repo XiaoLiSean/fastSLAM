@@ -10,26 +10,21 @@ end
 
 save VP gps timeGps timeUt timeZt ut zt x0
 %% Sequentialize data of motion and measurement
+t_cur       = min(timeZt(1), timeUt(1)); % current time
 idx_odo     = 1; % idx of last control sequence in original odometry data
 Data        = []; % sequence data contents measurements and odometry controls
 % Loop over the laser measurement
 for i = 2:length(timeZt)
     % if is odometry data: append odometry conmmand
-    idx_pre = idx_odo;
-    is_moved = false;
+    idx_pre = idx_odo; % pose ente
     while timeUt(idx_odo) < timeZt(i)
-        is_moved = true;
+        
         idx_odo = idx_odo + 1;
     end
-    % control from idx_pre to idx_odo
-    Data(end+1).odometry   = control_rel(pose(:,idx_pre),pose(:,idx_odo));
-    
     % if is sensor data: append measurements
-    if is_moved
-        Data(end).sensors   = zt(i).sensor;
-    else
-        Data(end).sensors   = [Data(end).sensors, zt(i).sensor];
-    end
+    Data(end+1).type     = 'measure';
+    t_cur   = timeZt(i);
+    Data(end).sensors   = zt(i).sensor;
 end
 
 save VP_SEQ gps Data x0
