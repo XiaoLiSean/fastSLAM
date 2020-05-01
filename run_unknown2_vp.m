@@ -25,9 +25,9 @@ gt                  = gps; % Groud truth trajectory
 initialStateMean    = x0; 
 initialStateCov     = diag([0.001, 0.001, 0.001]);%
 % Motion noise
-alphas  = 0.0*[0.0025 0.005 0.0025 1.2 0.0025 0.005].^2;% 1sec
+% alphas  = 0.0*[0.0025 0.005 0.0025 1.2 0.0025 0.005].^2;% 1sec
 % alphas  = [0.0025 0.0005 0.025 1.2 0.025 0.05].^2;
-% alphas  = [0.00025 0.00005 0.0025 0.0005 0.0025 0.0005].^2; % variance of noise proportional to alphas
+alphas  = [0.00025 0.00005 0.0025 0.0005 0.0025 0.0005].^2; % variance of noise proportional to alphas
 % Standard deviation of Gaussian sensor noise (independent of distance)
 betas   = [1 5 deg2rad(15)];
 sys     = system_initialization(alphas, betas);
