@@ -6,6 +6,9 @@ Video link: https://www.youtube.com/watch?v=l1vEpVRktko
 
 ## Guideline for running code
 FastSLAM with self-generated data: run.m
+
 FastSLAM1.0 with self-generated data: run_unknown1.m
+
 FastSLAM2.0 with self-generated data: run_unknown2.m
+
 FastSLAM on Victoria Park Dataset: run_unknown2_vp.m
